@@ -6,9 +6,14 @@ import pickle
 from scipy.sparse import coo_matrix
 
 # number of Monte Carlo trials
-num_trials = 50000
+num_trials = 1
+faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 5), ('data_left', 0)),
+				('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)),
+				('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)),
+				('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
 
-error_rate = 0.003
+# faulty_gates = []
+error_rate = 0.001  # Override below for actual error rate!
 
 
 # code parameters and number of syndrome cycles
@@ -24,6 +29,7 @@ print(title)
 with open(title, 'rb') as fp:
 	mydata = pickle.load(fp)
 
+error_rate = 0.0  # Override of the actual error rate!
 
 # file to save simulation results
 fname = './CODE_' + str(n) + '_' + str(k) + '_' + str(d) + '/result'
@@ -61,14 +67,14 @@ b2=mydata['b2']
 b3=mydata['b3']
 sX=mydata['sX']
 sZ=mydata['sZ']
-assert(error_rate==mydata['error_rate'])
+# assert(error_rate==mydata['error_rate'])
 cycle_repeated = num_cycles*cycle
 
 # setup BP-OSD decoder parameters
 my_bp_method = "ms"
-my_max_iter = 10000
+my_max_iter = 1000000
 my_osd_method = "osd_cs"
-my_osd_order = 7
+my_osd_order = 14
 my_ms_scaling_factor = 0
 
 
@@ -115,6 +121,11 @@ def generate_noisy_circuit(p):
 			continue
 		if gate[0]=='CNOT':
 			circ.append(gate)
+			if gate in faulty_gates:
+				circ.append(('X', gate[1]))  # These are X checks, always CNOT controls
+				faulty_gates.remove(gate)  # To make sure every error occurs only once
+				err_cnt += 1
+				continue
 			if np.random.uniform()<=error_rate_cnot:
 				error_type = np.random.randint(15)
 				if error_type==0:
@@ -190,6 +201,7 @@ def generate_noisy_circuit(p):
 			circ.append(gate)
 			continue
 
+	print(f"err_cnt = {err_cnt}")
 	return circ
 
 
