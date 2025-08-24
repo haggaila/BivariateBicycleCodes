@@ -6,11 +6,17 @@ import pickle
 from scipy.sparse import coo_matrix
 
 # number of Monte Carlo trials
-num_trials = 1
-faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 5), ('data_left', 0)),
-				('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)),
-				('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)),
-				('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
+num_trials = 2
+
+# Weight 7 faults, even with 100,000 BP iterations
+faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
+# faulty_gates = [('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 15), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_left', 31))]
+# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
+
+# Faults only with no more than ~1000 BP iterations
+# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 13), ('data_left', 14)), ('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 62), ('data_right', 68)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 6), ('data_right', 18))]
+# faulty_gates = [('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 10), ('data_left', 28))]
+# faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 5), ('data_right', 11)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 67), ('data_right', 7))]
 
 # faulty_gates = []
 error_rate = 0.001  # Override below for actual error rate!
@@ -72,7 +78,7 @@ cycle_repeated = num_cycles*cycle
 
 # setup BP-OSD decoder parameters
 my_bp_method = "ms"
-my_max_iter = 1000000
+my_max_iter = 100000
 my_osd_method = "osd_cs"
 my_osd_order = 14
 my_ms_scaling_factor = 0
