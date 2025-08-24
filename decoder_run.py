@@ -14,8 +14,8 @@ faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6
 # faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
 
 # Faults only with no more than ~1000 BP iterations
-# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 13), ('data_left', 14)), ('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 62), ('data_right', 68)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 6), ('data_right', 18))]
 # faulty_gates = [('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 10), ('data_left', 28))]
+# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 13), ('data_left', 14)), ('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 62), ('data_right', 68)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 6), ('data_right', 18))]
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 5), ('data_right', 11)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 67), ('data_right', 7))]
 
 # faulty_gates = []
