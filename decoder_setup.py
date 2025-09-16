@@ -52,7 +52,7 @@ sZ= [3, 5, 0, 1, 2, 4, 'idle']
 
 
 # number of syndrome measurement cycles 
-num_cycles = 8
+num_cycles = 12
 
 
 # Parameters of a Bivariate Bicycle (BB) code

@@ -1,6 +1,6 @@
 import numpy as np
 import itertools
-from ldpc import bposd_decoder
+# from ldpc import bposd_decoder
 from bposd.css import css_code
 import pickle
 from scipy.sparse import coo_matrix
@@ -8,7 +8,7 @@ import relay_bp
 from scipy.sparse import csr_matrix
 
 # number of Monte Carlo trials
-num_trials = 10000
+num_trials = 1000
 
 # Weight 7 faults, even with 100,000 BP iterations
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
@@ -46,9 +46,10 @@ num_trials = 10000
 
 
 faulty_gates = []
-error_rate = 0.002  # Override below for actual error rate!
+error_rate = 0.001  # Override below for actual error rate!
 relay_decoder = "RelayDecoderF64"  # RelayDecoderF64 MinSumBPDecoderF64
 
+print(f"Using Relay decoder class: {relay_decoder}")
 
 # code parameters and number of syndrome cycles
 n = 144
