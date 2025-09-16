@@ -4,22 +4,50 @@ from ldpc import bposd_decoder
 from bposd.css import css_code
 import pickle
 from scipy.sparse import coo_matrix
+import relay_bp
+from scipy.sparse import csr_matrix
 
 # number of Monte Carlo trials
-num_trials = 2
+num_trials = 10000
 
 # Weight 7 faults, even with 100,000 BP iterations
-faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
+# faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 15), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_left', 31))]
 # faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
 
 # Faults only with no more than ~1000 BP iterations
 # faulty_gates = [('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 10), ('data_left', 28))]
-# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 13), ('data_left', 14)), ('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 62), ('data_right', 68)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 6), ('data_right', 18))]
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 5), ('data_right', 11)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25)), ('CNOT', ('Xcheck', 67), ('data_right', 7))]
 
-# faulty_gates = []
-error_rate = 0.001  # Override below for actual error rate!
+# Weight 8
+# faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 13), ('data_left', 14)), ('CNOT', ('Xcheck', 67), ('data_left', 68)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 62), ('data_right', 68)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 6), ('data_right', 18))]
+
+# Weight 6
+# faulty_gates = [('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18)))]
+# [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_right', np.int64(54))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(27)))]
+# [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30)))]
+# [('CNOT', ('Xcheck', 3), ('data_left', np.int64(4))), ('CNOT', ('Xcheck', 7), ('data_right', np.int64(13))), ('CNOT', ('Xcheck', 12), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 1), ('data_right', np.int64(13))), ('CNOT', ('Xcheck', 10), ('data_right', np.int64(22))), ('CNOT', ('Xcheck', 13), ('data_right', np.int64(25)))]
+# [('CNOT', ('Xcheck', 3), ('data_left', np.int64(4))), ('CNOT', ('Xcheck', 13), ('data_left', np.int64(14))), ('CNOT', ('Xcheck', 9), ('data_right', np.int64(15))), ('CNOT', ('Xcheck', 16), ('data_right', np.int64(22))), ('CNOT', ('Xcheck', 4), ('data_right', np.int64(1))), ('CNOT', ('Xcheck', 7), ('data_right', np.int64(10)))]
+
+# Weight 5
+# [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(27)))]
+# [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 48), ('data_right', np.int64(54))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39)))]
+# [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18)))]
+
+# Weight 4
+# faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33)))]
+# faulty_gates = [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(36))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(27))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33)))]
+# faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+
+
+faulty_gates = []
+error_rate = 0.002  # Override below for actual error rate!
+relay_decoder = "RelayDecoderF64"  # RelayDecoderF64 MinSumBPDecoderF64
 
 
 # code parameters and number of syndrome cycles
@@ -35,7 +63,7 @@ print(title)
 with open(title, 'rb') as fp:
 	mydata = pickle.load(fp)
 
-error_rate = 0.0  # Override of the actual error rate!
+# error_rate = 0.0  # Override of the actual error rate!
 
 # file to save simulation results
 fname = './CODE_' + str(n) + '_' + str(k) + '_' + str(d) + '/result'
@@ -78,10 +106,13 @@ cycle_repeated = num_cycles*cycle
 
 # setup BP-OSD decoder parameters
 my_bp_method = "ms"
-my_max_iter = 100000
-my_osd_method = "osd_cs"
-my_osd_order = 14
-my_ms_scaling_factor = 0
+if relay_decoder == "":
+	my_max_iter = 10000
+	my_osd_method = "osd_cs"
+	my_osd_order = 10
+	my_ms_scaling_factor = 0
+else:
+	my_max_iter = 10000
 
 
 
@@ -345,26 +376,64 @@ def simulate_circuitX(C):
 
 
 # begin decoding
-bpdX=bposd_decoder(
-    HdecX,#the parity check matrix
-    channel_probs=channel_probsX, #assign error_rate to each qubit. This will override "error_rate" input variable
-    max_iter=my_max_iter, #the maximum number of iterations for BP)
-    bp_method=my_bp_method,
-    ms_scaling_factor=my_ms_scaling_factor, #min sum scaling factor. If set to zero the variable scaling factor method is used
-    osd_method=my_osd_method, #the OSD method. Choose from:  1) "osd_e", "osd_cs", "osd0"
-    osd_order=my_osd_order #the osd search depth
-    )
+if relay_decoder == "MinSumBPDecoderF64":
+	x_bpd2 = relay_bp.MinSumBPDecoderF64(
+		csr_matrix(HdecX),
+		error_priors=np.asarray(channel_probsX),  # Set the priors probability for each error
+		gamma0=0.125,  # Uniform memory weight for the first ensemble
+		max_iter=my_max_iter,  # Max BP iterations for the first ensemble
+	)
+	z_bpd2 = relay_bp.MinSumBPDecoderF64(
+		csr_matrix(HdecZ),
+		error_priors=np.asarray(channel_probsZ),  # Set the priors probability for each error
+		gamma0=0.125,  # Uniform memory weight for the first ensemble
+		max_iter=my_max_iter,  # Max BP iterations for the first ensemble
+	)
+elif relay_decoder == "RelayDecoderF64":
+	x_bpd2 = relay_bp.RelayDecoderF64(
+		csr_matrix(HdecX),
+		error_priors=np.asarray(channel_probsX),  # Set the priors probability for each error
+		gamma0=0.125,  # Uniform memory weight for the first ensemble
+		pre_iter=my_max_iter,  # Max BP iterations for the first ensemble
+		num_sets=0,  # Number of relay ensemble elements
+		set_max_iter=int(my_max_iter / 2),  # Max BP iterations per relay ensemble
+		gamma_dist_interval=(-0.24, 0.66),
+		# Set the uniform distribution range for disordered memory weight selection
+		stop_nconv=5,  # Number of relay solutions to find before stopping (the best will be selected)
+	)
+	z_bpd2 = relay_bp.RelayDecoderF64(
+		csr_matrix(HdecZ),
+		error_priors=np.asarray(channel_probsZ),  # Set the priors probability for each error
+		gamma0=0.125,  # Uniform memory weight for the first ensemble
+		pre_iter=my_max_iter,  # Max BP iterations for the first ensemble
+		num_sets=0,  # Number of relay ensemble elements
+		set_max_iter=int(my_max_iter / 2),  # Max BP iterations per relay ensemble
+		gamma_dist_interval=(-0.24, 0.66),
+		# Set the uniform distribution range for disordered memory weight selection
+		stop_nconv=5,  # Number of relay solutions to find before stopping (the best will be selected)
+	)
+
+else:
+	bpdX=bposd_decoder(
+		HdecX,#the parity check matrix
+		channel_probs=channel_probsX, #assign error_rate to each qubit. This will override "error_rate" input variable
+		max_iter=my_max_iter, #the maximum number of iterations for BP)
+		bp_method=my_bp_method,
+		ms_scaling_factor=my_ms_scaling_factor, #min sum scaling factor. If set to zero the variable scaling factor method is used
+		osd_method=my_osd_method, #the OSD method. Choose from:  1) "osd_e", "osd_cs", "osd0"
+		osd_order=my_osd_order #the osd search depth
+		)
 
 
-bpdZ=bposd_decoder(
-    HdecZ,#the parity check matrix
-    channel_probs=channel_probsZ, #assign error_rate to each qubit. This will override "error_rate" input variable
-    max_iter=my_max_iter, #the maximum number of iterations for BP)
-    bp_method=my_bp_method,
-    ms_scaling_factor=my_ms_scaling_factor, #min sum scaling factor. If set to zero the variable scaling factor method is used
-    osd_method="osd_cs", #the OSD method. Choose from:  1) "osd_e", "osd_cs", "osd0"
-    osd_order=my_osd_order #the osd search depth
-    )
+	bpdZ=bposd_decoder(
+		HdecZ,#the parity check matrix
+		channel_probs=channel_probsZ, #assign error_rate to each qubit. This will override "error_rate" input variable
+		max_iter=my_max_iter, #the maximum number of iterations for BP)
+		bp_method=my_bp_method,
+		ms_scaling_factor=my_ms_scaling_factor, #min sum scaling factor. If set to zero the variable scaling factor method is used
+		osd_method="osd_cs", #the OSD method. Choose from:  1) "osd_e", "osd_cs", "osd0"
+		osd_order=my_osd_order #the osd search depth
+		)
 
 
 good_trials=0
@@ -393,8 +462,11 @@ for trial in range(num_trials):
 			syndrome_history[pos[row]]+= syndrome_history_copy[pos[row-1]]
 	syndrome_history%= 2
 	assert(HdecZ.shape[0]==len(syndrome_history))
-	bpdZ.decode(syndrome_history)
-	low_weight_error = bpdZ.osdw_decoding
+	if relay_decoder != "":
+		low_weight_error = z_bpd2.decode(np.asarray(syndrome_history, dtype=np.uint8))
+	else:
+		bpdZ.decode(syndrome_history)
+		low_weight_error = bpdZ.osdw_decoding
 
 	assert(len(low_weight_error)==HZ.shape[1])
 	syndrome_history_augmented_guessed = (HZ @ low_weight_error) % 2
@@ -417,8 +489,11 @@ for trial in range(num_trials):
 				syndrome_history[pos[row]]+= syndrome_history_copy[pos[row-1]]
 		syndrome_history%= 2
 		assert(HdecX.shape[0]==len(syndrome_history))
-		bpdX.decode(syndrome_history)
-		low_weight_error = bpdX.osdw_decoding
+		if relay_decoder != "":
+			low_weight_error = x_bpd2.decode(np.asarray(syndrome_history, dtype=np.uint8))
+		else:
+			bpdX.decode(syndrome_history)
+			low_weight_error = bpdX.osdw_decoding
 
 		assert(len(low_weight_error)==HX.shape[1])
 		syndrome_history_augmented_guessed = (HX @ low_weight_error) % 2

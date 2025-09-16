@@ -33,7 +33,7 @@ def rank2(A):
 
 
 # depolarizing noise model 
-error_rate = 0.001
+error_rate = 0.002
 error_rate_init = error_rate
 error_rate_idle = error_rate
 error_rate_cnot = error_rate
@@ -52,7 +52,7 @@ sZ= [3, 5, 0, 1, 2, 4, 'idle']
 
 
 # number of syndrome measurement cycles 
-num_cycles = 12
+num_cycles = 8
 
 
 # Parameters of a Bivariate Bicycle (BB) code
