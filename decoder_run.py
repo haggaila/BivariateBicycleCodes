@@ -10,7 +10,7 @@ from scipy.sparse import csr_matrix
 # number of Monte Carlo trials
 num_trials = 1
 
-# Weight 7 faults, even with 100,000 BP iterations
+# Weight 7 faults
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 15), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_left', 31))]
 # faulty_gates = [('CNOT', ('Xcheck', 10), ('data_left', 11)), ('CNOT', ('Xcheck', 0), ('data_right', 6)), ('CNOT', ('Xcheck', 15), ('data_right', 21)), ('CNOT', ('Xcheck', 3), ('data_right', 0)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
@@ -33,7 +33,7 @@ num_trials = 1
 # faulty_gates = [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(27)))]
 # faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 48), ('data_right', np.int64(54))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39)))]
 # faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
-# Relay fails
+# CCC
 # faulty_gates = [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
 # faulty_gates = [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18)))]
 
@@ -45,7 +45,8 @@ num_trials = 1
 # faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33)))]
 # faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
 
-# Weight 4 - Relay fails
+# Weight 4
+# CCC
 faulty_gates = [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
 
 
