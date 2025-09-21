@@ -1,6 +1,6 @@
 import numpy as np
 import itertools
-# from ldpc import bposd_decoder
+from ldpc import bposd_decoder
 from bposd.css import css_code
 import pickle
 from scipy.sparse import coo_matrix
@@ -8,7 +8,7 @@ import relay_bp
 from scipy.sparse import csr_matrix
 
 # number of Monte Carlo trials
-num_trials = 1000
+num_trials = 1
 
 # Weight 7 faults, even with 100,000 BP iterations
 # faulty_gates = [('CNOT', ('Xcheck', 0), ('data_left', 1)), ('CNOT', ('Xcheck', 6), ('data_right', 12)), ('CNOT', ('Xcheck', 62), ('data_right', 65)), ('CNOT', ('Xcheck', 67), ('data_right', 70)), ('CNOT', ('Xcheck', 3), ('data_right', 15)), ('CNOT', ('Xcheck', 10), ('data_right', 22)), ('CNOT', ('Xcheck', 13), ('data_right', 25))]
@@ -30,11 +30,12 @@ num_trials = 1000
 # [('CNOT', ('Xcheck', 3), ('data_left', np.int64(4))), ('CNOT', ('Xcheck', 13), ('data_left', np.int64(14))), ('CNOT', ('Xcheck', 9), ('data_right', np.int64(15))), ('CNOT', ('Xcheck', 16), ('data_right', np.int64(22))), ('CNOT', ('Xcheck', 4), ('data_right', np.int64(1))), ('CNOT', ('Xcheck', 7), ('data_right', np.int64(10)))]
 
 # Weight 5
-# [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(27)))]
-# [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 48), ('data_right', np.int64(54))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39)))]
-# [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
-# [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
-# [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18)))]
+# faulty_gates = [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(27)))]
+# faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 48), ('data_right', np.int64(54))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39)))]
+# faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18))), ('CNOT', ('Xcheck', 27), ('data_right', np.int64(39))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# Relay fails
+# faulty_gates = [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
+# faulty_gates = [('CNOT', ('Xcheck', 24), ('data_left', np.int64(25))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 33), ('data_left', np.int64(34))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(18)))]
 
 # Weight 4
 # faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
@@ -44,12 +45,13 @@ num_trials = 1000
 # faulty_gates = [('CNOT', ('Xcheck', 39), ('data_left', np.int64(40))), ('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33)))]
 # faulty_gates = [('CNOT', ('Xcheck', 48), ('data_left', np.int64(49))), ('CNOT', ('Xcheck', 39), ('data_right', np.int64(45))), ('CNOT', ('Xcheck', 21), ('data_right', np.int64(33))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
 
+# Weight 4 - Relay fails
+faulty_gates = [('CNOT', ('Xcheck', 21), ('data_left', np.int64(22))), ('CNOT', ('Xcheck', 27), ('data_left', np.int64(28))), ('CNOT', ('Xcheck', 24), ('data_right', np.int64(30))), ('CNOT', ('Xcheck', 33), ('data_right', np.int64(45)))]
 
-faulty_gates = []
+
+# faulty_gates = []
 error_rate = 0.001  # Override below for actual error rate!
-relay_decoder = "RelayDecoderF64"  # RelayDecoderF64 MinSumBPDecoderF64
-
-print(f"Using Relay decoder class: {relay_decoder}")
+relay_decoder = "RelayDecoder"  # RelayDecoderF64 MinSumBPDecoderF64
 
 # code parameters and number of syndrome cycles
 n = 144
@@ -64,7 +66,7 @@ print(title)
 with open(title, 'rb') as fp:
 	mydata = pickle.load(fp)
 
-# error_rate = 0.0  # Override of the actual error rate!
+error_rate = 0.0  # Override of the actual error rate!
 
 # file to save simulation results
 fname = './CODE_' + str(n) + '_' + str(k) + '_' + str(d) + '/result'
@@ -113,7 +115,7 @@ if relay_decoder == "":
 	my_osd_order = 10
 	my_ms_scaling_factor = 0
 else:
-	my_max_iter = 10000
+	my_max_iter = 120
 
 
 
@@ -378,6 +380,8 @@ def simulate_circuitX(C):
 
 # begin decoding
 if relay_decoder == "MinSumBPDecoderF64":
+	print(f"Using Relay decoder class: MinSumBPDecoderF64")
+
 	x_bpd2 = relay_bp.MinSumBPDecoderF64(
 		csr_matrix(HdecX),
 		error_priors=np.asarray(channel_probsX),  # Set the priors probability for each error
@@ -390,13 +394,15 @@ if relay_decoder == "MinSumBPDecoderF64":
 		gamma0=0.125,  # Uniform memory weight for the first ensemble
 		max_iter=my_max_iter,  # Max BP iterations for the first ensemble
 	)
-elif relay_decoder == "RelayDecoderF64":
+elif relay_decoder == "RelayDecoder":
+	print(f"Using Relay decoder class: RelayDecoderF64")
+
 	x_bpd2 = relay_bp.RelayDecoderF64(
 		csr_matrix(HdecX),
 		error_priors=np.asarray(channel_probsX),  # Set the priors probability for each error
 		gamma0=0.125,  # Uniform memory weight for the first ensemble
-		pre_iter=my_max_iter,  # Max BP iterations for the first ensemble
-		num_sets=0,  # Number of relay ensemble elements
+		pre_iter=80,  # Max BP iterations for the first ensemble
+		num_sets=601,  # Number of relay ensemble elements
 		set_max_iter=int(my_max_iter / 2),  # Max BP iterations per relay ensemble
 		gamma_dist_interval=(-0.24, 0.66),
 		# Set the uniform distribution range for disordered memory weight selection
@@ -406,8 +412,8 @@ elif relay_decoder == "RelayDecoderF64":
 		csr_matrix(HdecZ),
 		error_priors=np.asarray(channel_probsZ),  # Set the priors probability for each error
 		gamma0=0.125,  # Uniform memory weight for the first ensemble
-		pre_iter=my_max_iter,  # Max BP iterations for the first ensemble
-		num_sets=0,  # Number of relay ensemble elements
+		pre_iter=80,  # Max BP iterations for the first ensemble
+		num_sets=601,  # Number of relay ensemble elements
 		set_max_iter=int(my_max_iter / 2),  # Max BP iterations per relay ensemble
 		gamma_dist_interval=(-0.24, 0.66),
 		# Set the uniform distribution range for disordered memory weight selection
@@ -415,6 +421,8 @@ elif relay_decoder == "RelayDecoderF64":
 	)
 
 else:
+	print(f"Using BP+OSD-CS decoder class: ldpc.bposd_decoder")
+
 	bpdX=bposd_decoder(
 		HdecX,#the parity check matrix
 		channel_probs=channel_probsX, #assign error_rate to each qubit. This will override "error_rate" input variable
